@@ -28,7 +28,7 @@ module.exports = app;
 
 app.get("/todos/", async (request, response) => {
   const { search_q = "", status = "", priority = "" } = request.query;
-  const getListQuery = `select * from todo where todo like '%${search_q}%' or status like '%${status}%' or priority like '%${priority}%';`;
+  const getListQuery = `select * from todo where todo like '%${search_q}%' and status like '%${status}%' and priority like '%${priority}%';`;
   const listArray = await db.all(getListQuery);
   response.send(listArray);
 });
