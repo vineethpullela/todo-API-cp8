@@ -56,24 +56,25 @@ app.post("/todos/", async (request, response) => {
 app.put("/todos/:todoId/", async (request, response) => {
   const { todoId } = request.params;
   const { status = "", priority = "", todo = "" } = request.body;
+  //console.log(status);
   let updated = "";
   switch (true) {
-    case status != undefined:
+    case status != "":
       updated = "Status";
       break;
-    case priority != undefined:
+    case priority != "":
       updated = "Priority";
       break;
-    case todo != undefined:
+    case todo != "":
       updated = "Todo";
       break;
 
     default:
       break;
   }
-  const updateTodo = `UPDATE todo SET todo = '${todo}', priority = '${priority}', status = '${status}' where id = '${todoId}';`;
+  const updateTodo = `UPDATE todo SET todo = '${todo}', priority = '${priority}', status = '${status}' WHERE id = ${todoId};`;
   await db.run(updateTodo);
-  response.send(`'${updated}' Updated`);
+  response.send(`${updated} Updated`);
 });
 
 //API 5
