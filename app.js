@@ -55,24 +55,33 @@ app.post("/todos/", async (request, response) => {
 
 app.put("/todos/:todoId/", async (request, response) => {
   const { todoId } = request.params;
-  const { status = "", priority = "", todo = "" } = request.body;
+
+  let requestBody = request.body;
+  //console.log(requestBody.todo);
+  //const { status = "", priority = "", todo = "" } = request.body;
   //console.log(status);
   let updated = "";
   switch (true) {
-    case status != "":
+    case requestBody.status !== undefined:
       updated = "Status";
       break;
-    case priority != "":
+    case requestBody.priority !== undefined:
       updated = "Priority";
       break;
-    case todo != "":
+    case requestBody.todo !== undefined:
       updated = "Todo";
       break;
-
-    default:
-      break;
   }
-  const updateTodo = `UPDATE todo SET todo = '${todo}', priority = '${priority}', status = '${status}' WHERE id = ${todoId};`;
+  const previousTodoQuery = `select * from todo where id = ${todoId};`;
+
+  const previousTodo = await db.get(previousTodoQuery);
+  const {
+    todo = previousTodo.todo,
+    status = previousTodo.status,
+    priority = previousTodo.priority,
+  } = request.body;
+
+  const updateTodo = `UPDATE todo SET todo = '${todo}', priority = '${priority}', status = '${status}' WHERE id = ${todoId}`;
   await db.run(updateTodo);
   response.send(`${updated} Updated`);
 });
